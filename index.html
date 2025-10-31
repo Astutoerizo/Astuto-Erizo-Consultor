@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Astuto Erizo - Psico-Zen Irreverente</title>
+    <link rel="icon" type="image/png" href="[Ruta_a_tu_Icono.png]">
+    
+    <style>
+        /* CSS BÁSICO PARA UNA BUENA EXPERIENCIA MÓVIL */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #e8f5e9; /* Un verde muy suave para la calma zen */
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #erizo-img {
+            max-width: 120px;
+            margin-bottom: 15px;
+            /* Aquí deberás poner tu imagen del Astuto Erizo */
+        }
+
+        h1 {
+            color: #4caf50; /* Verde principal */
+            font-size: 1.8em;
+        }
+
+        /* Área de Consulta */
+        #consulta-area {
+            margin-bottom: 20px;
+        }
+
+        #user-input {
+            width: 100%;
+            min-height: 100px;
+            padding: 15px;
+            border: 2px solid #a5d6a7;
+            border-radius: 8px;
+            font-size: 1em;
+            resize: vertical;
+            box-sizing: border-box;
+        }
+
+        #consultar-btn {
+            width: 100%;
+            padding: 15px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #consultar-btn:hover {
+            background-color: #388e3c;
+        }
+
+        /* Área de Respuesta */
+        #respuesta-area {
+            border-top: 2px dashed #a5d6a7;
+            padding-top: 20px;
+        }
+
+        .erizo-mensaje {
+            background-color: #f1f8e9; /* Fondo suave para la respuesta */
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 5px solid #4caf50;
+            line-height: 1.6;
+        }
+        
+        .cargando {
+             text-align: center;
+             color: #777;
+             font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <header>
+            <img id="erizo-img" src="Diseño sin título.jpg" alt="El Astuto Erizo">
+            <h1>El Astuto Erizo te Escucha</h1>
+        </header>
+        
+        <section id="consulta-area">
+            <textarea id="user-input" placeholder="Cuéntale al Erizo qué te pica, qué te molesta o dónde te has enredado..." rows="4"></textarea>
+            <button id="consultar-btn">Consultar al Erizo 🦔</button>
+        </section>
+        
+        <section id="respuesta-area">
+            <div id="erizo-output" class="erizo-mensaje">
+                **Astuto Erizo:** "¡Bah! El primer paso es dejar de pincharte a ti mismo. ¿Qué mosca te ha picado hoy? Dime."
+            </div>
+        </section>
+        
+    </div>
+
+    <script>
+        document.getElementById('consultar-btn').addEventListener('click', async () => {
+            const userInput = document.getElementById('user-input').value.trim();
+            const outputDiv = document.getElementById('erizo-output');
+            const button = document.getElementById('consultar-btn');
+
+            if (userInput === "") {
+                outputDiv.innerHTML = '¡Amigo! No me hagas perder el tiempo. Escribe algo.';
+                return;
+            }
+
+            // 1. Deshabilitar botón y mostrar carga
+            button.disabled = true;
+            button.textContent = 'El Erizo está rumiando...';
+            outputDiv.innerHTML = '<p class="cargando">El Erizo está buscando un gusano para inspirarse...</p>';
+            
+            // 2. Aquí es donde se hará la llamada a la API de la IA (Fase 2)
+            // Por ahora, solo simula una respuesta
+            try {
+                 // **NOTA IMPORTANTE:** Esta función será reemplazada en la Fase 2 por la llamada a la API de IA.
+                const erizoResponse = await simularRespuesta(userInput); 
+                
+                outputDiv.innerHTML = `<div class="erizo-mensaje"><strong>Astuto Erizo:</strong> ${erizoResponse}</div>`;
+                document.getElementById('user-input').value = ''; // Limpiar campo
+            } catch (error) {
+                outputDiv.innerHTML = `<div class="erizo-mensaje" style="color: red;"><strong>Astuto Erizo:</strong> ¡Vaya! Se me han enredado las púas. Algo ha fallado: ${error.message}</div>`;
+            } finally {
+                // 3. Restaurar botón
+                button.disabled = false;
+                button.textContent = 'Consultar al Erizo 🦔';
+            }
+        });
+
+        // Función simulada para probar la UI
+        function simularRespuesta(input) {
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    resolve(`¡Bah! Lo que me cuentas de "${input.substring(0, 30)}..." no es más que el viento moviendo unas cuantas hojas secas. Enfócate en la solidez de tu madriguera. Piénsalo con calma (y come un gusano).`);
+                }, 1500); // Simula 1.5 segundos de latencia de la API
+            });
+        }
+
+    </script>
+</body>
+</html>
