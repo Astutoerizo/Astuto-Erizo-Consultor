@@ -119,38 +119,93 @@
         
     </div>
 
-    <script>
-        document.getElementById('consultar-btn').addEventListener('click', async () => {
-            const userInput = document.getElementById('user-input').value.trim();
-            const outputDiv = document.getElementById('erizo-output');
-            const button = document.getElementById('consultar-btn');
+   <script type="module">
+    // 🚨 1. URL DE TU FUNCIÓN SERVERLESS DE VERCEL
+    const ERIZO_API_URL = "https://ast-erizo-psicologo.vercel.app/api/erizo"; 
+    
+    // 2. Historial de conversación para la función "Y dale"
+    // Lo usaremos para enviarle a Vercel el contexto completo
+    let conversationHistory = []; 
 
-            if (userInput === "") {
-                outputDiv.innerHTML = '¡Amigo! No me hagas perder el tiempo. Escribe algo.';
-                return;
+    // --- Función Principal de Consulta ---
+    async function getErizoResponse(userInput) {
+        
+        // 3. Añadir la nueva consulta del usuario al historial
+        conversationHistory.push({ role: "user", content: userInput });
+
+        const requestBody = {
+            conversationHistory: conversationHistory
+        };
+
+        try {
+            // 4. Llamada segura al backend de Vercel (que a su vez llama a OpenAI)
+            const response = await fetch(ERIZO_API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            });
+
+            if (!response.ok) {
+                // Manejo de errores de la API (ej. error 500 del backend)
+                throw new Error('Error de conexión con el Erizo.');
             }
-
-            // 1. Deshabilitar botón y mostrar carga
-            button.disabled = true;
-            button.textContent = 'El Erizo está rumiando...';
-            outputDiv.innerHTML = '<p class="cargando">El Erizo está buscando un gusano para inspirarse...</p>';
             
-            // 2. Aquí es donde se hará la llamada a la API de la IA (Fase 2)
-            // Por ahora, solo simula una respuesta
-            try {
-                 // **NOTA IMPORTANTE:** Esta función será reemplazada en la Fase 2 por la llamada a la API de IA.
-                const erizoResponse = await simularRespuesta(userInput); 
-                
-                outputDiv.innerHTML = `<div class="erizo-mensaje"><strong>Astuto Erizo:</strong> ${erizoResponse}</div>`;
-                document.getElementById('user-input').value = ''; // Limpiar campo
-            } catch (error) {
-                outputDiv.innerHTML = `<div class="erizo-mensaje" style="color: red;"><strong>Astuto Erizo:</strong> ¡Vaya! Se me han enredado las púas. Algo ha fallado: ${error.message}</div>`;
-            } finally {
-                // 3. Restaurar botón
-                button.disabled = false;
-                button.textContent = 'Consultar al Erizo 🦔';
+            const data = await response.json();
+            const erizoText = data.erizoResponse;
+            
+            // 5. Añadir la respuesta del modelo al historial
+            conversationHistory.push({ role: "assistant", content: erizoText });
+
+            // 6. Limpiar el historial si es muy largo
+            if (conversationHistory.length > 10) {
+                // Mantenemos solo las últimas 10 interacciones (5 pares)
+                conversationHistory = conversationHistory.slice(-10); 
             }
-        });
+
+            return erizoText;
+
+        } catch (error) {
+            // Si hay error, quitamos la última entrada del usuario del historial para no confundir a la IA en el siguiente intento
+            conversationHistory.pop(); 
+            throw new Error(error.message);
+        }
+    }
+
+
+    // --- Lógica de Interfaz (EventListener) ---
+    document.getElementById('consultar-btn').addEventListener('click', async () => {
+        const userInput = document.getElementById('user-input').value.trim();
+        const outputDiv = document.getElementById('erizo-output');
+        const button = document.getElementById('consultar-btn');
+
+        if (userInput === "") {
+            outputDiv.innerHTML = '<div class="erizo-mensaje"><strong>Astuto Erizo:</strong> ¡Amigo! No me hagas perder el tiempo. Escribe algo.</div>';
+            return;
+        }
+
+        // 1. Deshabilitar botón y mostrar carga
+        button.disabled = true;
+        button.textContent = 'El Erizo está rumiando...';
+        outputDiv.innerHTML = '<p class="cargando">El Erizo está buscando un gusano para inspirarse...</p>';
+        
+        // 2. Llamada a la IA
+        try {
+            const erizoResponse = await getErizoResponse(userInput);
+            
+            outputDiv.innerHTML = `<div class="erizo-mensaje">${erizoResponse}</div>`;
+            document.getElementById('user-input').value = ''; // Limpiar campo
+        } catch (error) {
+            outputDiv.innerHTML = `<div class="erizo-mensaje" style="color: red;"><strong>Astuto Erizo:</strong> ¡Vaya! Se me han enredado las púas. Algo ha fallado: ${error.message}</div>`;
+        } finally {
+            // 3. Restaurar botón
+            button.disabled = false;
+            button.textContent = 'Consultar al Erizo 🦔';
+        }
+    });
+
+</script>
 
         // Función simulada para probar la UI
         function simularRespuesta(input) {
