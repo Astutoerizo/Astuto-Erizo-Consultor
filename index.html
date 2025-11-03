@@ -37,6 +37,7 @@
         #erizo-img {
             max-width: 120px;
             margin-bottom: 15px;
+            /* ¡CORRECCIÓN! El HTML se quitó de aquí. */
         }
 
         h1 {
@@ -91,19 +92,19 @@
         }
         
         .cargando {
-             text-align: center;
-             color: #777;
-             font-style: italic;
+            text-align: center;
+            color: #777;
+            font-style: italic;
         }
     </style>
 </head>
 <body>
     <div class="container">
         
-       <header>
-                <img id="erizo-img" src="erizo solo.png" alt="El Astuto Erizo">
-                <h1>El Astuto Erizo te Escucha</h1>
-            </header>
+        <header>
+            <img id="erizo-img" src="Diseño sin título.jpg" alt="El Astuto Erizo">
+            <h1>El Astuto Erizo te Escucha</h1>
+        </header>
         
         <section id="consulta-area">
             <textarea id="user-input" placeholder="Cuéntale al Erizo qué te pica, qué te molesta o dónde te has enredado..." rows="4"></textarea>
@@ -118,7 +119,7 @@
         
     </div>
 
-   <script type="module">
+    <script type="module">
     // 🚨 1. URL DE TU FUNCIÓN SERVERLESS DE VERCEL
     const ERIZO_API_URL = "https://ast-erizo-psicologo.vercel.app/api/erizo"; 
     
