@@ -37,7 +37,6 @@
         #erizo-img {
             max-width: 120px;
             margin-bottom: 15px;
-            /* ¡CORRECCIÓN! El HTML se quitó de aquí. */
         }
 
         h1 {
@@ -102,7 +101,7 @@
     <div class="container">
         
         <header>
-            <img id="erizo-img" src="Diseño sin título.jpg" alt="El Astuto Erizo">
+            <img id="erizo-img" src="erizo solo.png" alt="El Astuto Erizo">
             <h1>El Astuto Erizo te Escucha</h1>
         </header>
         
@@ -124,13 +123,11 @@
     const ERIZO_API_URL = "https://ast-erizo-psicologo.vercel.app/api/erizo"; 
     
     // 2. Historial de conversación para la función "Y dale"
-    // Lo usaremos para enviarle a Vercel el contexto completo
     let conversationHistory = []; 
 
     // --- Función Principal de Consulta ---
     async function getErizoResponse(userInput) {
         
-        // 3. Añadir la nueva consulta del usuario al historial
         conversationHistory.push({ role: "user", content: userInput });
 
         const requestBody = {
@@ -138,7 +135,6 @@
         };
 
         try {
-            // 4. Llamada segura al backend de Vercel (que a su vez llama a OpenAI)
             const response = await fetch(ERIZO_API_URL, {
                 method: 'POST',
                 headers: {
@@ -148,26 +144,22 @@
             });
 
             if (!response.ok) {
-                // Manejo de errores de la API (ej. error 500 del backend)
+                // Si el error es 403/404/500, la respuesta ha llegado pero es un error interno.
                 throw new Error('Error de conexión con el Erizo.');
             }
             
             const data = await response.json();
             const erizoText = data.erizoResponse;
             
-            // 5. Añadir la respuesta del modelo al historial
             conversationHistory.push({ role: "assistant", content: erizoText });
 
-            // 6. Limpiar el historial si es muy largo
             if (conversationHistory.length > 10) {
-                // Mantenemos solo las últimas 10 interacciones (5 pares)
                 conversationHistory = conversationHistory.slice(-10); 
             }
 
             return erizoText;
 
         } catch (error) {
-            // Si hay error, quitamos la última entrada del usuario del historial para no confundir a la IA en el siguiente intento
             conversationHistory.pop(); 
             throw new Error(error.message);
         }
